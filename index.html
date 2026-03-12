@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Technical Product Support | Signant Health</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --teal: #00b4b6;
+      --teal-dark: #009a9c;
+      --teal-light: #e0f7f7;
+      --navy: #0a1628;
+      --navy-mid: #162040;
+      --text: #1a1a2e;
+      --text-secondary: #5a5a72;
+      --border: #d4d4e0;
+      --bg: #f5f6fa;
+      --white: #ffffff;
+      --red: #e74c5e;
+      --green: #22c55e;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--navy);
+      background-image:
+        radial-gradient(ellipse 600px 300px at 80% 20%, rgba(0,180,182,0.15), transparent),
+        radial-gradient(ellipse 400px 200px at 20% 80%, rgba(0,180,182,0.08), transparent);
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--teal), var(--teal-dark), var(--teal));
+    }
+    .header h1 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.75rem;
+      font-weight: 500;
+      color: var(--white);
+      letter-spacing: 0.02em;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* ── MAIN CARD ── */
+    .container {
+      max-width: 720px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04);
+      padding: 2.5rem;
+    }
+
+    /* ── BADGE + TITLE ── */
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--teal);
+      color: var(--white);
+      padding: 4px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.925rem;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+    }
+
+    /* ── FORM ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.925rem;
+      color: var(--text);
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 0.85rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0,180,182,0.12);
+    }
+    textarea { resize: vertical; min-height: 100px; }
+    select { cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5a72' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      padding-right: 2.5rem;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ── BUTTON ── */
+    .btn-call {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding: 0.85rem 2.25rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      background: var(--teal);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-call:hover { background: var(--teal-dark); }
+    .btn-call:active { transform: scale(0.98); }
+    .btn-call:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-call svg { width: 18px; height: 18px; }
+
+    /* ── STATUS ── */
+    .status {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: none;
+    }
+    .status.success {
+      display: block;
+      background: #ecfdf5;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    .status.error {
+      display: block;
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    .status.loading {
+      display: block;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border: 1px solid #b2dfdb;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .footer a { color: var(--teal); text-decoration: none; font-weight: 600; }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .card { padding: 1.5rem; }
+      .header h1 { font-size: 1.35rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Technical Product Support</h1>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="title-row">
+        <span class="badge">AI-Powered</span>
+        <h2>SHAI, CallMe</h2>
+      </div>
+      <p class="subtitle">
+        Fill in your details below and SHAI — our AI Technical Support Assistant — will call you back to help resolve your issue in your preferred language.
+      </p>
+
+      <div class="form-grid">
+        <!-- Language -->
+        <div class="full">
+          <label for="language">Language</label>
+          <select id="language">
+            <option value="english">English</option>
+            <option value="spanish">Spanish</option>
+          </select>
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" placeholder="Jane Doe" />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="jane@example.com" />
+        </div>
+
+        <!-- Study -->
+        <div class="full">
+          <label for="study">Study / Protocol</label>
+          <input type="text" id="study" placeholder="A-1234" />
+        </div>
+
+        <!-- Issue -->
+        <div class="full">
+          <label for="issue">Issue Description</label>
+          <textarea id="issue" placeholder="Describe the issue you're experiencing…"></textarea>
+        </div>
+
+        <!-- Phone -->
+        <div class="full">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="+1 555 123 4567" />
+          <p class="hint">Include country code, e.g. +1 for US, +44 for UK</p>
+        </div>
+      </div>
+
+      <button class="btn-call" id="callBtn" onclick="handleCall()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        CALL ME
+      </button>
+
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="footer">
+      Powered by <a href="#">SHAI</a> — Signant Health AI Technical Support
+    </div>
+  </div>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  CONFIGURATION — edit these values                          ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+const BLAND_API_KEY = 'YOUR_BLAND_API_KEY'; // ⚠️  Move to a Vercel serverless function for production
+
+const LANGUAGE_CONFIG = {
+  english: {
+    from: '+1XXXXXXXXXX',       // English-line caller ID
+    pathway_id: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',
+    voice_id: null,             // set if using a custom voice
+    request_data: {
+      language: 'english',
+      // add any English-specific fields here
+    },
+  },
+  spanish: {
+    from: '+1XXXXXXXXXX',       // Spanish-line caller ID
+    pathway_id: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',
+    voice_id: null,
+    request_data: {
+      language: 'spanish',
+      // add any Spanish-specific fields here
+    },
+  },
+};
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  LOGIC                                                      ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+function showStatus(type, message) {
+  const el = document.getElementById('status');
+  el.className = 'status ' + type;
+  el.textContent = message;
+}
+
+async function handleCall() {
+  const language  = document.getElementById('language').value;
+  const fullName  = document.getElementById('fullName').value.trim();
+  const email     = document.getElementById('email').value.trim();
+  const study     = document.getElementById('study').value.trim();
+  const issue     = document.getElementById('issue').value.trim();
+  const phone     = document.getElementById('phone').value.trim();
+
+  // Basic validation
+  if (!fullName || !email || !phone) {
+    showStatus('error', 'Please fill in at least your name, email, and phone number.');
+    return;
+  }
+
+  const config = LANGUAGE_CONFIG[language];
+  if (!config) {
+    showStatus('error', 'Unsupported language selection.');
+    return;
+  }
+
+  const btn = document.getElementById('callBtn');
+  btn.disabled = true;
+  showStatus('loading', 'Requesting call — hang tight…');
+
+  // Build the payload
+  const payload = {
+    phone_number: phone,
+    pathway_id: config.pathway_id,
+    from: config.from,
+    request_data: {
+      ...config.request_data,
+      full_name: fullName,
+      email: email,
+      study: study,
+      issue_description: issue,
+    },
+  };
+ 
+  if (config.voice_id) {
+    payload.voice_id = config.voice_id;
+  }
+
+  try {
+    const res = await fetch('https://api.bland.ai/v1/calls', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': BLAND_API_KEY,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.status === 'success') {
+      showStatus('success', `Call dispatched! Call ID: ${data.call_id ?? 'N/A'}. You should receive a call shortly.`);
+    } else {
+      showStatus('error', `Bland API error: ${data.message || JSON.stringify(data)}`);
+    }
+  } catch (err) {
+    showStatus('error', `Network error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+  }
+}
+</script>
+
+</body>
+</html>
