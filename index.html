@@ -142,6 +142,11 @@
       background-position: right 0.85rem center;
       padding-right: 2.5rem;
     }
+    select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: #f0f0f4;
+    }
 
     .hint {
       font-size: 0.75rem;
@@ -241,9 +246,10 @@
         <div class="full">
           <label for="language">Language</label>
           <select id="language">
-            <option value="english">English</option>
-            <option value="spanish">Spanish</option>
+            <option value="en">English</option>
+            <option value="es" disabled>Spanish (coming soon)</option>
           </select>
+          <p class="hint">Additional languages coming soon</p>
         </div>
 
         <!-- Name -->
@@ -293,34 +299,15 @@
 
 <script>
 // ╔══════════════════════════════════════════════════════════════╗
-// ║  CONFIGURATION — edit these values                          ║
+// ║  CONFIGURATION                                              ║
 // ╚══════════════════════════════════════════════════════════════╝
 
-const BLAND_API_KEY = 'YOUR_BLAND_API_KEY'; // ⚠️  Move to a Vercel serverless function for production
-
-const LANGUAGE_CONFIG = {
-  english: {
-    from: '+1XXXXXXXXXX',       // English-line caller ID
-    pathway_id: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',
-    voice_id: null,             // set if using a custom voice
-    request_data: {
-      language: 'english',
-      // add any English-specific fields here
-    },
-  },
-  spanish: {
-    from: '+1XXXXXXXXXX',       // Spanish-line caller ID
-    pathway_id: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',
-    voice_id: null,
-    request_data: {
-      language: 'spanish',
-      // add any Spanish-specific fields here
-    },
-  },
-};
+const BLAND_API_KEY = 'org_f712e33295e8d6a6040ebd9ac2a10365fcdc7583f7de4fa15c731aae9c2c6e69a79cef0f11c25b0352d069';
+const PATHWAY_ID   = 'a0fbba13-c5b5-4b16-8608-a6722c8879f5';
+const FROM_NUMBER  = '+16467224731';
 
 // ╔══════════════════════════════════════════════════════════════╗
-// ║  LOGIC                                                      ║
+// ║  HELPERS                                                    ║
 // ╚══════════════════════════════════════════════════════════════╝
 
 function showStatus(type, message) {
@@ -329,48 +316,80 @@ function showStatus(type, message) {
   el.textContent = message;
 }
 
-async function handleCall() {
-  const language  = document.getElementById('language').value;
-  const fullName  = document.getElementById('fullName').value.trim();
-  const email     = document.getElementById('email').value.trim();
-  const study     = document.getElementById('study').value.trim();
-  const issue     = document.getElementById('issue').value.trim();
-  const phone     = document.getElementById('phone').value.trim();
+/**
+ * Split "Jane Doe" → { first: "Jane", last: "Doe" }
+ * Handles single names, multiple middle names, etc.
+ */
+function parseName(fullName) {
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length === 0) return { first: '', last: '' };
+  if (parts.length === 1) return { first: parts[0], last: '' };
+  return {
+    first: parts[0],
+    last: parts.slice(1).join(' '),
+  };
+}
 
-  // Basic validation
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MAIN CALL HANDLER                                          ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+async function handleCall() {
+  const language = document.getElementById('language').value;
+  const fullName = document.getElementById('fullName').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const study    = document.getElementById('study').value.trim();
+  const issue    = document.getElementById('issue').value.trim();
+  const phone    = document.getElementById('phone').value.trim();
+
+  // ── Validation ──
   if (!fullName || !email || !phone) {
     showStatus('error', 'Please fill in at least your name, email, and phone number.');
     return;
   }
 
-  const config = LANGUAGE_CONFIG[language];
-  if (!config) {
-    showStatus('error', 'Unsupported language selection.');
+  // Only English is supported for now
+  if (language !== 'en') {
+    showStatus('error', 'Only English is supported at this time.');
     return;
   }
+
+  const { first, last } = parseName(fullName);
 
   const btn = document.getElementById('callBtn');
   btn.disabled = true;
   showStatus('loading', 'Requesting call — hang tight…');
 
-  // Build the payload
+  // ── Build payload ──
   const payload = {
     phone_number: phone,
-    pathway_id: config.pathway_id,
-    from: config.from,
+    pathway_id: PATHWAY_ID,
+    from: FROM_NUMBER,
     request_data: {
-      ...config.request_data,
-      full_name: fullName,
-      email: email,
-      study: study,
-      issue_description: issue,
+      // Flag so the pathway skips name/email collection
+      call_me: true,
+
+      // Caller identity — used downstream by Check Account Status, ServiceNow, etc.
+      first_name: first,
+      last_name: last,
+      confirmed_email: email,
+      email_address: email,
+
+      // Language
+      language: language,
+
+      // Study / protocol context
+      protocol_or_study: study,
+
+      // Issue context
+      original_issue_description: issue,
+
+      // Caller's phone number for downstream reference
+      shai_call_me_phone: phone,
     },
   };
- 
-  if (config.voice_id) {
-    payload.voice_id = config.voice_id;
-  }
 
+  // ── Send to Bland ──
   try {
     const res = await fetch('https://api.bland.ai/v1/calls', {
       method: 'POST',
